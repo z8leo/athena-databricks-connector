@@ -13,7 +13,7 @@ wheels = [
 
 [[package]]
 name = "athena-databricks-connector"
-version = "0.0.0"
+version = "1.0.0"
 source = { editable = "." }
 
 [package.optional-dependencies]

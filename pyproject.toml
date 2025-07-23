@@ -1,6 +1,6 @@
 [project]
 name = "athena-databricks-connector"
-version = "0.0.0"
+version = "1.0.0"
 description = "This connector enables AWS Athena to communicate with Databricks."
 authors = [
     {name = "Leonhard Zacharias", email = "leonhard.zacharias@gmail.com"}
