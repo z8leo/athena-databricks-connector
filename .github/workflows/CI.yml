@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      - name: Run pre-commit hooks
+        run: uv run pre-commit run --all-files
+
+      - name: Run tests
+        run: uv run pytest
+
+      # - name: Generate documentation
+      #   run: uv run pdoc src/python_template -o ./docs
+      # TODO: docs must be commited and published
+
+      - name: Semantic Release Version
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: uv run semantic-release -vv version
+
+      - name: Python Semantic Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: uv run semantic-release -vv publish
